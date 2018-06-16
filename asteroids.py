@@ -37,10 +37,10 @@ ship = pygame.image.load("ship.png")
 pygame.display.set_icon(ship)
 
 font = {
-	20:pygame.font.SysFont("Comic Sans MS", 20),
-	30:pygame.font.SysFont("Comic Sans MS", 30),
-	60:pygame.font.SysFont("Comic Sans MS", 60),
-	90:pygame.font.SysFont("Comic Sans MS", 90)
+	20:pygame.font.Font("font.otf", 20),
+	30:pygame.font.Font("font.otf", 30),
+	60:pygame.font.Font("font.otf", 60),
+	90:pygame.font.Font("font.otf", 90)
 }
 
 def makeLaser(): # Spawns a laser
