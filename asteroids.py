@@ -1,7 +1,7 @@
-import pygame
-import random
-from time import sleep as wait
-
+import pygame # For the GUI
+import random # For the spawning of asteroids
+from time import sleep as wait # A fix for a bug
+"""Colors"""
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
@@ -11,17 +11,17 @@ dGreen = (0, 190, 0)
 grey = (100,100,100)
 yellow = (255, 255, 0)
 dYellow = (190, 190, 0)
-
+"""FPS"""
 FPS = 25
 clock = pygame.time.Clock()
 
-width, height = 800,600
-
+width, height = 800,600 #Screen size
+"""Init"""
 pygame.init()
 gameDisplay = pygame.display.set_mode((width,height))
 screen = gameDisplay
 pygame.display.set_caption("Asteroids")
-
+"""Important game varibles"""
 lead_x = 50
 
 lead_y = height/2
@@ -32,11 +32,11 @@ asterExists = False
 
 laserX, asterX, laserY, asterY = 0,0,0,0
 
-ship = pygame.image.load("ship.png")
+ship = pygame.image.load("ship.png") # Sprite for ship
 
-pygame.display.set_icon(ship)
+pygame.display.set_icon(ship) # Game icon
 
-font = {
+font = { # Dogesans font
 	20:pygame.font.Font("font.otf", 20),
 	30:pygame.font.Font("font.otf", 30),
 	60:pygame.font.Font("font.otf", 60),
@@ -59,29 +59,29 @@ def spawnAsteroid(): # Spawns an asteroid
 	asterY = random.randrange(0,height-50)
 	asterExists = True
 
-def text_objects(text,color,font):
+def text_objects(text,color,font): #Important function for message()
 	textSurface = font.render(text, True, color)
 	return textSurface, textSurface.get_rect()
 
 def message(msg, color, pos, size, centered=True): # Displays text
-	if centered:
+	if centered: # Centers text on desired position
 		textSurface, textRect = text_objects(msg, color, font[size])
 		textRect.center = pos[0], pos[1]
 		gameDisplay.blit(textSurface, textRect)
-	else:
+	else: # Desired position will be in top left corner.
 		text = font[size].render(msg, True, color)
 		gameDisplay.blit(screenText, pos)
 
 scoreFactor = 1
 
-def controls():
+def controls(): # The controls menu
 	global scoreFactor
 	
 	exit = (50, 500, 100, 50)
 	factor1 = (150, 350, 100, 50)
 	factor2 = (350, 350, 100, 50)
 	factor5 = (550, 350, 100, 50)
-	
+	"""Text you see"""
 	gameDisplay.fill(white)
 	message("Controls", red, (width/2, (height/2)-200), 90)
 	message("Use the up down arrows to move the ship", black, (width/2, (height/2)-100), 20)
@@ -90,6 +90,7 @@ def controls():
 	message("If the asteroid makes it to the cyan line, you will lose.", black, (width/2, (height/2)-25), 20)
 	message("You can change the difficulty by increasing the score multiplyer", black, (width/2, (height/2)), 20)
 	pygame.display.update()
+	"""Buttons for the difficulty changer"""
 	while True:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -140,7 +141,7 @@ def controls():
 		
 		pygame.display.update()
 
-def endGame():
+def endGame(): # What you see when you die
 	global score
 	score = round(score*100)
 	end = False
@@ -148,12 +149,13 @@ def endGame():
 	message("You lost!", red, (width/2, (height/2)-200), 90)
 	message("Your score is {}".format(str(score-100)), black, (width/2, (height/2)-125), 30)
 	pygame.display.update()
+	"""Plays music"""
 	pygame.mixer.music.load("death.mp3")
 	pygame.mixer.music.play(-1)
 	start = (width/2-250,height/2,500,50)
 	home = (width/2-250, height/2+100, 500, 50)
 	exit = (width/2-250,height/2+200,500,50)
-	
+	"""Button code"""
 	while not end:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -189,13 +191,13 @@ def endGame():
 		message("Start Screen", white, (home[0]+(home[2]/2), home[1]+(home[3]/2)), 30)
 		pygame.display.update()
 		
-def hover(pos):
+def hover(pos): # Returns a bool if your cursor is over a certian area, useful for buttons
 	if pygame.mouse.get_pos()[0] >= pos[0] and pygame.mouse.get_pos()[1] >= pos[1]:
 		if pygame.mouse.get_pos()[0] <= pos[0]+pos[2] and pygame.mouse.get_pos()[1] <= pos[1]+pos[3]:
 			return True
 	return False
 	
-def pressed(pos):
+def pressed(pos): # Returns a bool if your cursor clicked a certian area, useful for buttons
 	if hover(pos):
 		if bool(pygame.mouse.get_pressed()[0]):
 			return True
@@ -203,7 +205,7 @@ def pressed(pos):
 
 score = 1
 
-def game():	
+def game():	# Game code
 	global score
 	global laserExists
 	global asterExists
@@ -215,11 +217,12 @@ def game():
 	global asterY
 	global move_y
 	
-	pygame.mixer.music.load("Tetris.mp3")
+	pygame.mixer.music.load("Tetris.mp3") # Plays music
 	pygame.mixer.music.play(-1)
 	while True: # Main game loop
 		gameDisplay.fill(white)
 		pygame.draw.rect(gameDisplay, (0,255,255), (90, 0, 20, 600))
+		"""Detects your key presses"""
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
@@ -238,36 +241,36 @@ def game():
 					move_x = 0
 					move_y = 0
 		
-		if laserExists:
+		if laserExists: # Moves your laser
 			laserX += 50
 			pygame.draw.rect(gameDisplay, red, (laserX, laserY, 30, 10))
 		
-		if asterExists:
-			asterX -= 10*score
+		if asterExists: # Moves the asteroid
+			asterX -= 10*score # Higher score, faster asteroid
 			pygame.draw.rect(gameDisplay, grey, (asterX, asterY, 50, 50))
-			if asterX <= 100:
+			if asterX <= 100: # Code that is called when you lose, git gud
 				asterExists = False
 				endGame()
 				score = 1
 		else:
-			spawnAsteroid()
-		
+			spawnAsteroid() # Spawns another asteroid if the last one died.
+		"""Sets screen bounderies if you try to go off screen"""
 		if lead_y == 0 and move_y == -20:
 			move_y = 0
 		if lead_y >= 560 and move_y == 20:
 			move_y = 0
 		lead_y += move_y
-		
+		"""Hit detection"""
 		if laserX+30 >= asterX and asterY in range(int(laserY-50), int(laserY+50)):
 			asterExists, laserExists = False, False
-			score += .01*scoreFactor
+			score += .01*scoreFactor # Increases your score
 		
-		gameDisplay.blit(ship, (lead_x, lead_y))
-		pygame.display.update()
-		clock.tick(FPS)
+		gameDisplay.blit(ship, (lead_x, lead_y)) # Blits your ship
+		pygame.display.update() 
+		clock.tick(FPS) # FPS
 
-def startScreen():
-	pygame.mixer.music.load("sans.mp3")
+def startScreen(): # Start screen
+	pygame.mixer.music.load("sans.mp3") # Music
 	pygame.mixer.music.play(-1)
 	gameDisplay.fill(white)
 	start = (width/2-250,height/2,500,50)
@@ -277,7 +280,7 @@ def startScreen():
 	
 	message("Asteroids!", red, (width/2, (height/2)-200), 90)
 	pygame.display.update()
-	
+	"""Button logic"""
 	while True:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -307,4 +310,4 @@ def startScreen():
 		message("Controls", white, (info[0]+(info[2]/2), info[1]+(info[3]/2)), 30)
 		pygame.display.update()
 
-startScreen()
+startScreen() # Calls start screen
